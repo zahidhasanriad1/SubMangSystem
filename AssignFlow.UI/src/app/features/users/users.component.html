@@ -52,7 +52,18 @@
           <td>{{ user.createdAtUtc | date: 'MMM d, y' }}</td>
           <td>
             <div class="row-actions">
-              <p-button icon="pi pi-pencil" severity="secondary" [text]="true" [rounded]="true" pTooltip="Edit user" (onClick)="openEdit(user)" />
+              <p-button
+                icon="pi pi-pencil"
+                ariaLabel="Edit user"
+                severity="secondary"
+                [text]="true"
+                [rounded]="true"
+                pTooltip="Edit user"
+                tooltipEvent="both"
+                tooltipPosition="left"
+                tooltipStyleClass="action-tooltip"
+                appendTo="body"
+                (onClick)="openEdit(user)" />
             </div>
           </td>
         </tr>

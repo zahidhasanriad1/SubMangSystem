@@ -92,6 +92,7 @@ button { cursor: pointer; }
 .p-toast { width: min(390px, calc(100vw - 28px)) !important; }
 .p-toast-message { border-radius: 13px !important; box-shadow: var(--app-shadow) !important; }
 .p-paginator { padding: 12px; border-top: 1px solid var(--app-border); }
+.p-tooltip.action-tooltip .p-tooltip-text { width: max-content; max-width: min(12rem, calc(100vw - 24px)); white-space: nowrap; }
 
 @media (max-width: 720px) {
   .page-head { flex-direction: column; gap: 16px; margin-bottom: 18px; }
