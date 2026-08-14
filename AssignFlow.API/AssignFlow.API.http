@@ -1,6 +1,6 @@
-@AssignFlow.API_HostAddress = http://localhost:5057
+@AssignFlow.API_HostAddress = https://localhost:44383
 
-GET {{AssignFlow.API_HostAddress}}/weatherforecast/
+GET {{AssignFlow.API_HostAddress}}/health
 Accept: application/json
 
 ###

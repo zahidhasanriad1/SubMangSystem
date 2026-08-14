@@ -17,13 +17,7 @@ npm install
 ng serve
 ```
 
-The client runs at `http://localhost:4200`; its default development proxy forwards `/api` to the IIS Express backend at `http://localhost:60122`.
-
-When using the regular .NET/Kestrel profile on port `5057`, start the client with:
-
-```powershell
-npm run start:dotnet
-```
+The client runs at `http://localhost:4200` and calls the IIS Express API directly at `https://localhost:44383/api`. No Angular or Nginx API proxy is used.
 
 ## Production build
 

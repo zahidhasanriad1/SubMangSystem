@@ -105,12 +105,12 @@ npm install
 ng serve
 ```
 
-Open `http://localhost:4200`. The default Angular development proxy forwards `/api` to IIS Express at `http://localhost:60122`. The production Nginx image proxies the same path to the API container, so the browser always uses a same-origin API URL.
+Open `http://localhost:4200`. The Angular client calls the IIS Express API directly at `https://localhost:44383/api`; no frontend API proxy is used.
 
 ### Run the backend with IIS Express
 
 1. Open `AssignFlow.slnx` in Visual Studio and select `AssignFlow.API` as the startup project.
-2. Select the `IIS Express` launch profile and start it. The API listens at `http://localhost:60122`.
+2. Select the `IIS Express` launch profile and start it. Swagger opens at `https://localhost:44383/swagger/index.html`.
 3. Start Angular:
 
 ```powershell
@@ -118,7 +118,7 @@ cd AssignFlow.UI
 ng serve
 ```
 
-Open `http://localhost:4200`. If the API is running with the regular `http` profile on port `5057`, use `npm run start:dotnet` instead.
+Open `http://localhost:4200`. The browser communicates directly with the IIS Express HTTPS endpoint on port `44383`.
 
 The client uses session-scoped JWT storage, centralized API error handling, PrimeNG Toast notifications, role guards, server-side pagination, strict template checking, OnPush change detection, and lazy-loaded feature pages.
 
