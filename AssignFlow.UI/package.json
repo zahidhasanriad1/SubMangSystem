@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "start:iis": "ng serve --proxy-config proxy.iis-express.conf.json",
+    "start:dotnet": "ng serve --proxy-config proxy.dotnet.conf.json",
     "build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test --watch=false"

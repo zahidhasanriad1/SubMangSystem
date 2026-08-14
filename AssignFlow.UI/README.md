@@ -14,13 +14,15 @@ Angular 21 standalone frontend for the AssignFlow assignment and submission plat
 
 ```powershell
 npm install
-npm start
+ng serve
 ```
 
-The client runs at `http://localhost:4200`; its development proxy forwards `/api` to `http://localhost:5057`. Start the backend with:
+The client runs at `http://localhost:4200`; its default development proxy forwards `/api` to the IIS Express backend at `http://localhost:60122`.
+
+When using the regular .NET/Kestrel profile on port `5057`, start the client with:
 
 ```powershell
-dotnet run --project ..\AssignFlow.API --launch-profile http
+npm run start:dotnet
 ```
 
 ## Production build

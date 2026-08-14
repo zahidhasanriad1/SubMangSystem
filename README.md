@@ -102,23 +102,23 @@ The migration is in `AssignFlow.Domain/Migrations`. An idempotent database scrip
 ```powershell
 cd AssignFlow.UI
 npm install
-npm start
+ng serve
 ```
 
-Open `http://localhost:4200`. The Angular development proxy forwards `/api` to the backend HTTP launch profile at `http://localhost:5057`. The production Nginx image proxies the same path to the API container, so the browser always uses a same-origin API URL.
+Open `http://localhost:4200`. The default Angular development proxy forwards `/api` to IIS Express at `http://localhost:60122`. The production Nginx image proxies the same path to the API container, so the browser always uses a same-origin API URL.
 
 ### Run the backend with IIS Express
 
 1. Open `AssignFlow.slnx` in Visual Studio and select `AssignFlow.API` as the startup project.
 2. Select the `IIS Express` launch profile and start it. The API listens at `http://localhost:60122`.
-3. Start Angular with the IIS Express proxy:
+3. Start Angular:
 
 ```powershell
 cd AssignFlow.UI
-npm run start:iis
+ng serve
 ```
 
-Open `http://localhost:4200`. Use `npm start` only when the API is running with the regular `http` profile on port `5057`.
+Open `http://localhost:4200`. If the API is running with the regular `http` profile on port `5057`, use `npm run start:dotnet` instead.
 
 The client uses session-scoped JWT storage, centralized API error handling, PrimeNG Toast notifications, role guards, server-side pagination, strict template checking, OnPush change detection, and lazy-loaded feature pages.
 
