@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize, forkJoin, Observable } from 'rxjs';
+import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
@@ -33,6 +35,7 @@ type MembershipAction = 'assignTeacher' | 'removeTeacher' | 'enrollStudent' | 'r
   imports: [
     ReactiveFormsModule,
     ButtonModule,
+    ConfirmDialogModule,
     DialogModule,
     InputNumberModule,
     InputTextModule,
@@ -49,6 +52,7 @@ type MembershipAction = 'assignTeacher' | 'removeTeacher' | 'enrollStudent' | 'r
 export class AcademicComponent {
   private readonly academicService = inject(AcademicService);
   private readonly adminService = inject(AdminService);
+  private readonly confirmationService = inject(ConfirmationService);
   private readonly toast = inject(ToastService);
   private readonly formBuilder = inject(FormBuilder);
   readonly auth = inject(AuthStore);
@@ -140,6 +144,30 @@ export class AcademicComponent {
     this.accessVisible.set(true);
   }
 
+  confirmDeleteCourse(item: CourseOffering): void {
+    this.confirmDelete(
+      `Delete ${item.subjectCode} from ${item.className} - ${item.section}?`,
+      this.academicService.deleteCourseOffering(item.courseOfferingId),
+      'Course offering deleted.'
+    );
+  }
+
+  confirmDeleteClass(item: ClassRoom): void {
+    this.confirmDelete(
+      `Delete ${item.name} - ${item.section}?`,
+      this.academicService.deleteClassRoom(item.classRoomId),
+      'Class deleted.'
+    );
+  }
+
+  confirmDeleteSubject(item: Subject): void {
+    this.confirmDelete(
+      `Delete ${item.code} - ${item.name}?`,
+      this.academicService.deleteSubject(item.subjectId),
+      'Subject deleted.'
+    );
+  }
+
   saveEditor(): void {
     switch (this.editorType()) {
       case 'class': this.saveClass(); break;
@@ -198,6 +226,23 @@ export class AcademicComponent {
       this.toast.success(message);
       this.editorVisible.set(false);
       this.loadAll();
+    });
+  }
+
+  private confirmDelete(message: string, request: Observable<boolean>, successMessage: string): void {
+    this.confirmationService.confirm({
+      header: 'Confirm deletion',
+      message,
+      icon: 'pi pi-exclamation-triangle',
+      acceptButtonProps: { label: 'Delete', severity: 'danger' },
+      rejectButtonProps: { label: 'Cancel', severity: 'secondary', outlined: true },
+      accept: () => {
+        this.saving.set(true);
+        request.pipe(finalize(() => this.saving.set(false))).subscribe(() => {
+          this.toast.success(successMessage);
+          this.loadAll();
+        });
+      }
     });
   }
 

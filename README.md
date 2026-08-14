@@ -128,11 +128,11 @@ Demo seeding must be enabled with `Seed__Enabled=true`. These accounts are for l
 
 | Role | Email | Password source |
 |---|---|---|
-| Admin | `mzhr.riad@gmail.com` | `Seed__AdminPassword` |
-| Teacher | `teacher@assignflow.local` | `Seed__DemoPassword` |
-| Student | `student@assignflow.local` | `Seed__DemoPassword` |
+| Admin | `mzhr.riad@gmail.com` | `12345678` |
+| Teacher | `teacher@assignflow.local` | `AssignFlow@123` |
+| Student | `student@assignflow.local` | `AssignFlow@123` |
 
-Change or disable all demo credentials outside local evaluation.
+These evaluation-only defaults are provided by `appsettings.Development.json` and `.env.example`. Change them and disable seeding outside local evaluation.
 
 ## Main API routes
 
@@ -168,6 +168,7 @@ The current tests cover assigned-teacher authorization, Admin authoring restrict
 
 ## Assumptions
 
+- Angular 21 was selected at the requester's direction instead of Next.js/React; the required TypeScript, responsive UI, validation, and API integration capabilities are retained.
 - A course offering represents one subject taught to one class/section in one academic year.
 - Multiple teachers can share a course offering.
 - Students submit a rich-text/plain-text answer; binary attachments are outside the mandatory brief.

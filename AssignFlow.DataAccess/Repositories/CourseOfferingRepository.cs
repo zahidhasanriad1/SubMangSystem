@@ -74,6 +74,11 @@ public class CourseOfferingRepository : Repository<CourseOffering, Guid>, ICours
             cancellationToken);
     }
 
+    public Task<bool> HasAssignmentsAsync(Guid courseOfferingId, CancellationToken cancellationToken = default)
+    {
+        return DbContext.Assignments.AnyAsync(x => x.CourseOfferingId == courseOfferingId, cancellationToken);
+    }
+
     public async Task<bool> AssignTeacherAsync(CourseTeacher entity, CancellationToken cancellationToken = default)
     {
         await DbContext.CourseTeachers.AddAsync(entity, cancellationToken);

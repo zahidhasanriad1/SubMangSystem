@@ -63,6 +63,17 @@ public class ClassRoomService : Service<ClassRoom, Guid>, IClassRoomService
         return Map(entity);
     }
 
+    public async Task<bool> DeleteClassRoomAsync(Guid classRoomId, CancellationToken cancellationToken = default)
+    {
+        var entity = await GetByIdAsync(classRoomId, cancellationToken);
+        if (await _classRoomRepository.HasCourseOfferingsAsync(classRoomId, cancellationToken))
+            throw new ConflictException("Remove the class's course offerings before deleting it.");
+
+        return await _classRoomRepository.DeleteAsync(entity, cancellationToken)
+            ? true
+            : throw new BadRequestException("Failed to delete the class.");
+    }
+
     private static ClassRoomDto Map(ClassRoom entity)
     {
         return new ClassRoomDto

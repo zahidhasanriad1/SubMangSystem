@@ -30,4 +30,9 @@ public class SubjectRepository : Repository<Subject, Guid>, ISubjectRepository
     {
         return DbContext.Subjects.AnyAsync(x => x.Code == code && x.Id != excludedId, cancellationToken);
     }
+
+    public Task<bool> HasCourseOfferingsAsync(Guid subjectId, CancellationToken cancellationToken = default)
+    {
+        return DbContext.CourseOfferings.AnyAsync(x => x.SubjectId == subjectId, cancellationToken);
+    }
 }

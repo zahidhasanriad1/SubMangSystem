@@ -85,6 +85,20 @@ public class CourseOfferingService : Service<CourseOffering, Guid>, ICourseOffer
             ?? throw new NotFoundException("The updated course offering could not be loaded.");
     }
 
+    public async Task<bool> DeleteCourseOfferingAsync(
+        Guid courseOfferingId,
+        CancellationToken cancellationToken = default)
+    {
+        var entity = await _courseOfferingRepository.GetByIdAsync(courseOfferingId, cancellationToken)
+            ?? throw new NotFoundException("Course offering was not found.");
+        if (await _courseOfferingRepository.HasAssignmentsAsync(courseOfferingId, cancellationToken))
+            throw new ConflictException("Delete the course's assignments before deleting the course offering.");
+
+        return await _courseOfferingRepository.DeleteAsync(entity, cancellationToken)
+            ? true
+            : throw new BadRequestException("Failed to delete the course offering.");
+    }
+
     public async Task<bool> AssignTeacherAsync(
         Guid courseOfferingId,
         Guid teacherId,

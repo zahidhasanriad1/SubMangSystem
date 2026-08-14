@@ -42,4 +42,9 @@ public class ClassRoomRepository : Repository<ClassRoom, Guid>, IClassRoomReposi
             x.Id != excludedId,
             cancellationToken);
     }
+
+    public Task<bool> HasCourseOfferingsAsync(Guid classRoomId, CancellationToken cancellationToken = default)
+    {
+        return DbContext.CourseOfferings.AnyAsync(x => x.ClassRoomId == classRoomId, cancellationToken);
+    }
 }

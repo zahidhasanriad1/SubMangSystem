@@ -52,6 +52,17 @@ public class SubjectService : Service<Subject, Guid>, ISubjectService
         return Map(entity);
     }
 
+    public async Task<bool> DeleteSubjectAsync(Guid subjectId, CancellationToken cancellationToken = default)
+    {
+        var entity = await GetByIdAsync(subjectId, cancellationToken);
+        if (await _subjectRepository.HasCourseOfferingsAsync(subjectId, cancellationToken))
+            throw new ConflictException("Remove the subject's course offerings before deleting it.");
+
+        return await _subjectRepository.DeleteAsync(entity, cancellationToken)
+            ? true
+            : throw new BadRequestException("Failed to delete the subject.");
+    }
+
     private static SubjectDto Map(Subject entity)
     {
         return new SubjectDto

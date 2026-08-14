@@ -22,6 +22,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.2" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\AssignFlow.API\AssignFlow.API.csproj" />
     <ProjectReference Include="..\..\AssignFlow.DataAccess\AssignFlow.DataAccess.csproj" />
     <ProjectReference Include="..\..\AssignFlow.Domain\AssignFlow.Domain.csproj" />
     <ProjectReference Include="..\..\AssignFlow.Models\AssignFlow.Models.csproj" />

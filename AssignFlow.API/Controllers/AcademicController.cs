@@ -50,6 +50,15 @@ public class AcademicController : BaseController
         return Ok(new ApiResponse<ClassRoomDto>(data, message: "Class updated successfully."));
     }
 
+    [Authorize(Roles = AppRoles.Admin)]
+    [HttpDelete("classes/{classRoomId:guid}")]
+    public async Task<ActionResult<ApiResponse<bool>>> DeleteClass(Guid classRoomId, CancellationToken cancellationToken)
+    {
+        bool result = await _classRoomService.DeleteClassRoomAsync(classRoomId, cancellationToken);
+
+        return Ok(new ApiResponse<bool>(result, message: "Class deleted successfully."));
+    }
+
     [HttpGet("subjects")]
     public async Task<ActionResult<ApiResponse<ICollection<SubjectDto>>>> GetSubjects(CancellationToken cancellationToken)
     {
@@ -76,6 +85,15 @@ public class AcademicController : BaseController
         return Ok(new ApiResponse<SubjectDto>(data, message: "Subject updated successfully."));
     }
 
+    [Authorize(Roles = AppRoles.Admin)]
+    [HttpDelete("subjects/{subjectId:guid}")]
+    public async Task<ActionResult<ApiResponse<bool>>> DeleteSubject(Guid subjectId, CancellationToken cancellationToken)
+    {
+        bool result = await _subjectService.DeleteSubjectAsync(subjectId, cancellationToken);
+
+        return Ok(new ApiResponse<bool>(result, message: "Subject deleted successfully."));
+    }
+
     [HttpGet("course-offerings")]
     public async Task<ActionResult<ApiResponse<ICollection<CourseOfferingDto>>>> GetCourseOfferings(CancellationToken cancellationToken)
     {
@@ -95,14 +113,20 @@ public class AcademicController : BaseController
 
     [Authorize(Roles = AppRoles.Admin)]
     [HttpPut("course-offerings/{courseOfferingId:guid}")]
-    public async Task<ActionResult<ApiResponse<CourseOfferingDto>>> UpdateCourseOffering(
-        Guid courseOfferingId,
-        [FromBody] UpsertCourseOfferingDto model,
-        CancellationToken cancellationToken)
+    public async Task<ActionResult<ApiResponse<CourseOfferingDto>>> UpdateCourseOffering(Guid courseOfferingId,[FromBody] UpsertCourseOfferingDto model,CancellationToken cancellationToken)
     {
         CourseOfferingDto data = await _courseOfferingService.UpdateCourseOfferingAsync(courseOfferingId, model, cancellationToken);
 
         return Ok(new ApiResponse<CourseOfferingDto>(data, message: "Course offering updated successfully."));
+    }
+
+    [Authorize(Roles = AppRoles.Admin)]
+    [HttpDelete("course-offerings/{courseOfferingId:guid}")]
+    public async Task<ActionResult<ApiResponse<bool>>> DeleteCourseOffering(Guid courseOfferingId, CancellationToken cancellationToken)
+    {
+        bool result = await _courseOfferingService.DeleteCourseOfferingAsync(courseOfferingId, cancellationToken);
+
+        return Ok(new ApiResponse<bool>(result, message: "Course offering deleted successfully."));
     }
 
     [Authorize(Roles = AppRoles.Admin)]

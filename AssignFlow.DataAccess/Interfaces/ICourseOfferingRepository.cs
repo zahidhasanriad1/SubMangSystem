@@ -10,6 +10,7 @@ public interface ICourseOfferingRepository : IRepository<CourseOffering, Guid>
     Task<bool> ExistsAsync(Guid classRoomId, Guid subjectId, Guid? excludedId, CancellationToken cancellationToken = default);
     Task<bool> IsTeacherAssignedAsync(Guid courseOfferingId, Guid teacherId, CancellationToken cancellationToken = default);
     Task<bool> IsStudentEnrolledAsync(Guid courseOfferingId, Guid studentId, CancellationToken cancellationToken = default);
+    Task<bool> HasAssignmentsAsync(Guid courseOfferingId, CancellationToken cancellationToken = default);
     Task<bool> AssignTeacherAsync(CourseTeacher entity, CancellationToken cancellationToken = default);
     Task<bool> EnrollStudentAsync(CourseEnrollment entity, CancellationToken cancellationToken = default);
     Task<bool> RemoveTeacherAsync(Guid courseOfferingId, Guid teacherId, CancellationToken cancellationToken = default);
