@@ -1,0 +1,121 @@
+:root {
+  --app-primary: #176f78;
+  --app-primary-dark: #0b4352;
+  --app-accent: #d69236;
+  --app-ink: #153542;
+  --app-muted: #657d87;
+  --app-border: #dce7eb;
+  --app-background: #f4f8f9;
+  --app-surface: #ffffff;
+  --app-success: #2d8a67;
+  --app-danger: #bd4a54;
+  --app-shadow: 0 12px 32px rgba(18, 54, 68, 0.08);
+  color-scheme: light;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { min-width: 320px; min-height: 100%; overflow-x: hidden; background: var(--app-background); }
+body { min-height: 100vh; margin: 0; overflow-x: hidden; color: var(--app-ink); background: var(--app-background); -webkit-font-smoothing: antialiased; }
+button, input, textarea { font: inherit; }
+button { cursor: pointer; }
+
+.page { width: min(1480px, 100%); margin: 0 auto; }
+.page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
+.page-head__actions { display: flex; align-items: center; gap: 10px; }
+.eyebrow { margin: 0 0 7px; color: var(--app-primary); font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; }
+.page-title { margin: 0; color: #123341; font-size: clamp(25px, 3vw, 34px); font-weight: 760; letter-spacing: -0.035em; line-height: 1.1; }
+.page-subtitle { max-width: 680px; margin: 9px 0 0; color: var(--app-muted); font-size: 14px; line-height: 1.55; }
+
+.surface-card {
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: 18px;
+  box-shadow: 0 1px 2px rgba(18, 54, 68, 0.025);
+}
+
+.toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 18px; border-bottom: 1px solid var(--app-border); }
+.toolbar__filters { display: flex; flex: 1; align-items: center; gap: 10px; }
+.search-field { position: relative; width: min(360px, 100%); }
+.search-field > i { position: absolute; top: 50%; left: 13px; z-index: 1; color: #81949c; transform: translateY(-50%); }
+.search-field input { width: 100%; padding-left: 39px; }
+
+.table-shell { overflow: hidden; }
+.table-shell .p-datatable-table-container,
+.table-shell .p-datatable-wrapper { max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; }
+.table-shell .p-datatable-table { min-width: 760px; }
+.table-shell .p-datatable-thead > tr > th {
+  padding: 13px 16px;
+  color: #58717c;
+  background: #f7fafb;
+  border-color: #e5edef;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+.table-shell .p-datatable-tbody > tr > td { padding: 15px 16px; color: #284653; border-color: #e9eff1; font-size: 13px; }
+.table-shell .p-datatable-tbody > tr:hover { background: #f9fbfc; }
+.table-primary { display: block; color: #173845; font-weight: 700; }
+.table-secondary { display: block; margin-top: 3px; color: #78909a; font-size: 11px; }
+.row-actions { display: flex; justify-content: flex-end; gap: 4px; white-space: nowrap; }
+
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.field { display: flex; min-width: 0; flex-direction: column; gap: 7px; }
+.field--full { grid-column: 1 / -1; }
+.field label { color: #385663; font-size: 12px; font-weight: 700; }
+.field small { color: #748b94; line-height: 1.4; }
+.field-error { color: var(--app-danger) !important; font-size: 11px; }
+.field .p-inputtext,
+.field .p-password,
+.field .p-password-input,
+.field .p-select,
+.field .p-inputnumber,
+.field .p-inputnumber-input,
+.field .p-datepicker,
+.field textarea { width: 100%; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 10px; padding-top: 10px; }
+.toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 44px; }
+
+.empty-state { display: grid; min-height: 300px; place-items: center; padding: 42px; color: var(--app-muted); text-align: center; }
+.empty-state i { display: block; margin-bottom: 14px; color: #8db4bd; font-size: 34px; }
+.loading-state { display: grid; min-height: 280px; place-items: center; }
+.truncate { max-width: 360px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.segment-control { display: inline-flex; gap: 4px; padding: 4px; background: #eaf1f3; border-radius: 12px; }
+.segment-control button { padding: 8px 14px; color: #647d87; background: transparent; border: 0; border-radius: 9px; font-size: 12px; font-weight: 700; }
+.segment-control button.active { color: #144c59; background: #fff; box-shadow: 0 2px 8px rgba(19, 59, 73, 0.1); }
+
+.p-dialog { border: 1px solid #d9e5e9 !important; border-radius: 18px !important; box-shadow: 0 28px 70px rgba(7, 35, 48, 0.2) !important; }
+.p-dialog .p-dialog-header { padding: 22px 24px 15px; }
+.p-dialog .p-dialog-content { padding: 8px 24px 24px; }
+.p-toast { width: min(390px, calc(100vw - 28px)) !important; }
+.p-toast-message { border-radius: 13px !important; box-shadow: var(--app-shadow) !important; }
+.p-paginator { padding: 12px; border-top: 1px solid var(--app-border); }
+
+@media (max-width: 720px) {
+  .page-head { flex-direction: column; gap: 16px; margin-bottom: 18px; }
+  .page-head__actions { width: 100%; }
+  .page-head__actions .p-button { flex: 1; }
+  .toolbar { align-items: stretch; flex-direction: column; }
+  .toolbar__filters { align-items: stretch; flex-direction: column; }
+  .toolbar__filters .p-select { width: 100%; }
+  .search-field { width: 100%; }
+  .form-grid { grid-template-columns: 1fr; }
+  .field--full { grid-column: auto; }
+  .table-shell { border-radius: 14px; }
+  .table-shell .p-datatable-table { min-width: 680px; }
+  .p-paginator { flex-wrap: wrap; gap: 4px; }
+  .p-dialog { width: calc(100vw - 20px) !important; max-height: calc(100dvh - 20px); margin: 10px; }
+  .p-dialog .p-dialog-header { padding: 18px 17px 12px; }
+  .p-dialog .p-dialog-content { padding: 7px 17px 18px; }
+  .dialog-actions { flex-wrap: wrap; }
+  .segment-control { width: 100%; overflow-x: auto; }
+  .segment-control button { flex: 1 0 auto; }
+  .empty-state { min-height: 220px; padding: 28px 18px; }
+}
+
+@media (max-width: 420px) {
+  .page-subtitle { font-size: 13px; }
+  .dialog-actions .p-button { flex: 1; }
+}

@@ -1,0 +1,27 @@
+.record-count { color: #718892; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.action-column { min-width: 150px; text-align: right; }
+.course-code { display: inline-flex; padding: 5px 8px; color: #236d76; background: #e6f2f3; border-radius: 7px; font-size: 10px; font-weight: 800; }
+.deadline { display: block; color: #365764; font-weight: 700; }
+.deadline--late { color: #a94853; }
+.submission-state { display: inline-flex; align-items: center; gap: 6px; color: #788d95; font-size: 11px; font-weight: 650; }
+.submission-state--done { color: #277c60; }
+.submission-count { color: #5f7882; font-size: 11px; font-weight: 650; }
+.submission-context { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; padding: 14px; background: #f1f7f8; border-radius: 12px; }
+.submission-context > span { padding: 6px 8px; color: #fff; background: #176f78; border-radius: 7px; font-size: 10px; font-weight: 800; }
+.submission-context strong, .submission-context small { display: block; }
+.submission-context strong { color: #264955; font-size: 13px; }
+.submission-context small { margin-top: 3px; color: #778e97; font-size: 10px; }
+.assignment-detail header { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; padding-bottom: 18px; border-bottom: 1px solid var(--app-border); }
+.assignment-detail header span { display: inline-flex; padding: 5px 8px; color: #236d76; background: #e6f2f3; border-radius: 7px; font-size: 10px; font-weight: 800; }
+.assignment-detail h3 { margin: 9px 0 0; color: #173845; font-size: clamp(20px, 3vw, 27px); }
+.assignment-detail header p { margin: 5px 0 0; color: #718892; font-size: 12px; }
+.assignment-detail__facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 18px 0; }
+.assignment-detail__facts div, .assignment-detail article { padding: 15px; background: #f5f9fa; border: 1px solid #e3ecef; border-radius: 12px; }
+.assignment-detail__facts span, .assignment-detail article > span { display: block; color: #708790; font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.assignment-detail__facts strong { display: block; margin-top: 6px; color: #294b57; font-size: 12px; }
+.assignment-detail article p { margin: 10px 0 0; color: #345662; font-size: 13px; line-height: 1.7; white-space: pre-wrap; }
+
+@media (max-width: 620px) {
+  .assignment-detail header { flex-direction: column; }
+  .assignment-detail__facts { grid-template-columns: 1fr; }
+}

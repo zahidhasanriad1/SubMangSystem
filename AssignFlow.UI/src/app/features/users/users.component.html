@@ -1,0 +1,106 @@
+<section class="page">
+  <header class="page-head">
+    <div>
+      <p class="eyebrow">Administration</p>
+      <h1 class="page-title">People & access</h1>
+      <p class="page-subtitle">Create institutional accounts and keep every role aligned with its responsibilities.</p>
+    </div>
+    <div class="page-head__actions">
+      <p-button label="Add user" icon="pi pi-user-plus" (onClick)="openCreate()" />
+    </div>
+  </header>
+
+  <div class="surface-card table-shell">
+    <div class="toolbar">
+      <div class="toolbar__filters">
+        <span class="search-field">
+          <i class="pi pi-search"></i>
+          <input pInputText [formControl]="search" placeholder="Search name or email">
+        </span>
+      </div>
+      <span class="record-count">{{ totalRecords() }} people</span>
+    </div>
+
+    <p-table
+      [value]="users()"
+      [lazy]="true"
+      [loading]="loading()"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 20, 50]"
+      [totalRecords]="totalRecords()"
+      (onLazyLoad)="load($event)">
+      <ng-template #header>
+        <tr>
+          <th>Person</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th class="action-column">Action</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-user>
+        <tr>
+          <td>
+            <div class="person-cell">
+              <span class="person-avatar">{{ initials(user.fullName) }}</span>
+              <div><span class="table-primary">{{ user.fullName }}</span><span class="table-secondary">{{ user.email }}</span></div>
+            </div>
+          </td>
+          <td><span class="role-chip">{{ user.role }}</span></td>
+          <td><p-tag [value]="user.isActive ? 'Active' : 'Inactive'" [severity]="user.isActive ? 'success' : 'secondary'" /></td>
+          <td>{{ user.createdAtUtc | date: 'MMM d, y' }}</td>
+          <td>
+            <div class="row-actions">
+              <p-button icon="pi pi-pencil" severity="secondary" [text]="true" [rounded]="true" pTooltip="Edit user" (onClick)="openEdit(user)" />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template #emptymessage>
+        <tr><td colspan="5"><div class="empty-state"><div><i class="pi pi-users"></i><strong>No people found</strong><p>Try a different search term.</p></div></div></td></tr>
+      </ng-template>
+    </p-table>
+  </div>
+</section>
+
+<p-dialog
+  [header]="editingUser() ? 'Edit user' : 'Create user'"
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: 'min(620px, 94vw)' }">
+  <form class="form-grid" [formGroup]="form" (ngSubmit)="save()">
+    <div class="field field--full">
+      <label for="fullName">Full name</label>
+      <input id="fullName" pInputText formControlName="fullName" placeholder="Full institutional name">
+      @if (form.controls.fullName.touched && form.controls.fullName.invalid) { <small class="field-error">Full name is required.</small> }
+    </div>
+    <div class="field">
+      <label for="userEmail">Email</label>
+      <input id="userEmail" pInputText type="email" formControlName="email" placeholder="name@institution.edu">
+      @if (form.controls.email.touched && form.controls.email.invalid) { <small class="field-error">A valid email is required.</small> }
+    </div>
+    <div class="field">
+      <label for="userRole">Role</label>
+      <p-select inputId="userRole" formControlName="role" [options]="roles" appendTo="body" />
+    </div>
+    @if (!editingUser()) {
+      <div class="field field--full">
+        <label for="userPassword">Temporary password</label>
+        <p-password inputId="userPassword" formControlName="password" [feedback]="true" [toggleMask]="true" />
+        @if (form.controls.password.touched && form.controls.password.invalid) { <small class="field-error">Use at least 8 characters.</small> }
+      </div>
+    } @else {
+      <div class="field field--full toggle-row">
+        <div><label for="isActive">Account status</label><small>Inactive users cannot access the workspace.</small></div>
+        <p-toggleSwitch inputId="isActive" formControlName="isActive" />
+      </div>
+    }
+    <div class="dialog-actions field--full">
+      <p-button type="button" label="Cancel" severity="secondary" [text]="true" (onClick)="dialogVisible.set(false)" />
+      <p-button type="submit" [label]="editingUser() ? 'Save changes' : 'Create user'" [loading]="saving()" />
+    </div>
+  </form>
+</p-dialog>

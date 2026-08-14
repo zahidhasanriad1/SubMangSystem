@@ -1,0 +1,134 @@
+<section class="page">
+  <header class="page-head">
+    <div>
+      <p class="eyebrow">Academic structure</p>
+      <h1 class="page-title">Courses & curriculum</h1>
+      <p class="page-subtitle">A clean view of classes, subjects and the course offerings that connect them.</p>
+    </div>
+    @if (isAdmin()) {
+      <div class="page-head__actions">
+        <p-button [label]="activeView() === 'courses' ? 'Add course' : activeView() === 'classes' ? 'Add class' : 'Add subject'" icon="pi pi-plus" (onClick)="openCreate()" />
+      </div>
+    }
+  </header>
+
+  <div class="academic-summary">
+    <article><span><i class="pi pi-book"></i></span><div><strong>{{ courses().length }}</strong><small>Course offerings</small></div></article>
+    <article><span><i class="pi pi-building"></i></span><div><strong>{{ classRooms().length }}</strong><small>Classes</small></div></article>
+    <article><span><i class="pi pi-bookmark"></i></span><div><strong>{{ subjects().length }}</strong><small>Subjects</small></div></article>
+  </div>
+
+  <div class="surface-card table-shell">
+    <div class="toolbar">
+      <div class="segment-control">
+        <button type="button" [class.active]="activeView() === 'courses'" (click)="activeView.set('courses')">Courses</button>
+        <button type="button" [class.active]="activeView() === 'classes'" (click)="activeView.set('classes')">Classes</button>
+        <button type="button" [class.active]="activeView() === 'subjects'" (click)="activeView.set('subjects')">Subjects</button>
+      </div>
+      @if (!isAdmin()) { <span class="view-note"><i class="pi pi-eye"></i> Role-scoped view</span> }
+    </div>
+
+    @switch (activeView()) {
+      @case ('courses') {
+        <p-table [value]="courses()" [loading]="loading()" [rowHover]="true">
+          <ng-template #header><tr><th>Course</th><th>Class</th><th>Teachers</th><th>Students</th><th>Status</th>@if (isAdmin()) { <th class="action-column">Action</th> }</tr></ng-template>
+          <ng-template #body let-course>
+            <tr>
+              <td><span class="table-primary">{{ course.subjectName }}</span><span class="table-secondary">{{ course.subjectCode }}</span></td>
+              <td><span class="table-primary">{{ course.className }} · {{ course.section }}</span><span class="table-secondary">Academic year {{ course.academicYear }}</span></td>
+              <td><span class="count-chip"><i class="pi pi-user-edit"></i>{{ course.teacherCount }}</span></td>
+              <td><span class="count-chip"><i class="pi pi-users"></i>{{ course.studentCount }}</span></td>
+              <td><p-tag [value]="course.isActive ? 'Active' : 'Inactive'" [severity]="course.isActive ? 'success' : 'secondary'" /></td>
+              @if (isAdmin()) {
+                <td><div class="row-actions"><p-button icon="pi pi-pencil" severity="secondary" [text]="true" [rounded]="true" pTooltip="Edit course" (onClick)="openCourseEdit(course)" /><p-button icon="pi pi-users" severity="secondary" [text]="true" [rounded]="true" pTooltip="Manage access" (onClick)="openAccess(course)" /></div></td>
+              }
+            </tr>
+          </ng-template>
+          <ng-template #emptymessage><tr><td [attr.colspan]="isAdmin() ? 6 : 5"><div class="empty-state"><div><i class="pi pi-book"></i><strong>No courses available</strong></div></div></td></tr></ng-template>
+        </p-table>
+      }
+      @case ('classes') {
+        <p-table [value]="classRooms()" [loading]="loading()" [rowHover]="true">
+          <ng-template #header><tr><th>Class</th><th>Section</th><th>Academic year</th><th>Status</th>@if (isAdmin()) { <th class="action-column">Action</th> }</tr></ng-template>
+          <ng-template #body let-item>
+            <tr>
+              <td><span class="table-primary">{{ item.name }}</span></td><td>{{ item.section }}</td><td>{{ item.academicYear }}</td>
+              <td><p-tag [value]="item.isActive ? 'Active' : 'Inactive'" [severity]="item.isActive ? 'success' : 'secondary'" /></td>
+              @if (isAdmin()) { <td><div class="row-actions"><p-button icon="pi pi-pencil" severity="secondary" [text]="true" [rounded]="true" pTooltip="Edit class" (onClick)="openClassEdit(item)" /></div></td> }
+            </tr>
+          </ng-template>
+        </p-table>
+      }
+      @case ('subjects') {
+        <p-table [value]="subjects()" [loading]="loading()" [rowHover]="true">
+          <ng-template #header><tr><th>Code</th><th>Subject</th><th>Status</th>@if (isAdmin()) { <th class="action-column">Action</th> }</tr></ng-template>
+          <ng-template #body let-item>
+            <tr>
+              <td><span class="subject-code">{{ item.code }}</span></td><td><span class="table-primary">{{ item.name }}</span></td>
+              <td><p-tag [value]="item.isActive ? 'Active' : 'Inactive'" [severity]="item.isActive ? 'success' : 'secondary'" /></td>
+              @if (isAdmin()) { <td><div class="row-actions"><p-button icon="pi pi-pencil" severity="secondary" [text]="true" [rounded]="true" pTooltip="Edit subject" (onClick)="openSubjectEdit(item)" /></div></td> }
+            </tr>
+          </ng-template>
+        </p-table>
+      }
+    }
+  </div>
+</section>
+
+<p-dialog
+  [header]="editorType() === 'course' ? (editingCourse() ? 'Edit course offering' : 'Create course offering') : editorType() === 'class' ? (editingClass() ? 'Edit class' : 'Create class') : (editingSubject() ? 'Edit subject' : 'Create subject')"
+  [visible]="editorVisible()"
+  (visibleChange)="editorVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: 'min(620px, 94vw)' }">
+  @switch (editorType()) {
+    @case ('class') {
+      <form class="form-grid" [formGroup]="classForm" (ngSubmit)="saveEditor()">
+        <div class="field"><label for="className">Class name</label><input id="className" pInputText formControlName="name" placeholder="Grade 10"></div>
+        <div class="field"><label for="section">Section</label><input id="section" pInputText formControlName="section" placeholder="A"></div>
+        <div class="field"><label for="academicYear">Academic year</label><p-inputNumber inputId="academicYear" formControlName="academicYear" [useGrouping]="false" [min]="2000" [max]="2200" /></div>
+        <div class="field toggle-row"><label for="classActive">Active</label><p-toggleSwitch inputId="classActive" formControlName="isActive" /></div>
+        <div class="dialog-actions field--full"><p-button type="button" label="Cancel" severity="secondary" [text]="true" (onClick)="editorVisible.set(false)" /><p-button type="submit" label="Save class" [loading]="saving()" /></div>
+      </form>
+    }
+    @case ('subject') {
+      <form class="form-grid" [formGroup]="subjectForm" (ngSubmit)="saveEditor()">
+        <div class="field"><label for="subjectCode">Subject code</label><input id="subjectCode" pInputText formControlName="code" placeholder="CSE-101"></div>
+        <div class="field"><label for="subjectName">Subject name</label><input id="subjectName" pInputText formControlName="name" placeholder="Computer Science"></div>
+        <div class="field field--full toggle-row"><label for="subjectActive">Active</label><p-toggleSwitch inputId="subjectActive" formControlName="isActive" /></div>
+        <div class="dialog-actions field--full"><p-button type="button" label="Cancel" severity="secondary" [text]="true" (onClick)="editorVisible.set(false)" /><p-button type="submit" label="Save subject" [loading]="saving()" /></div>
+      </form>
+    }
+    @case ('course') {
+      <form class="form-grid" [formGroup]="courseForm" (ngSubmit)="saveEditor()">
+        <div class="field"><label for="courseClass">Class</label><p-select inputId="courseClass" formControlName="classRoomId" [options]="classRooms()" optionLabel="name" optionValue="classRoomId" appendTo="body" placeholder="Select class" /></div>
+        <div class="field"><label for="courseSubject">Subject</label><p-select inputId="courseSubject" formControlName="subjectId" [options]="subjects()" optionLabel="name" optionValue="subjectId" appendTo="body" placeholder="Select subject" /></div>
+        <div class="field field--full toggle-row"><label for="courseActive">Active</label><p-toggleSwitch inputId="courseActive" formControlName="isActive" /></div>
+        <div class="dialog-actions field--full"><p-button type="button" label="Cancel" severity="secondary" [text]="true" (onClick)="editorVisible.set(false)" /><p-button type="submit" [label]="editingCourse() ? 'Save course' : 'Create course'" [loading]="saving()" /></div>
+      </form>
+    }
+  }
+</p-dialog>
+
+<p-dialog
+  header="Manage course access"
+  [visible]="accessVisible()"
+  (visibleChange)="accessVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: 'min(650px, 94vw)' }">
+  <div class="access-context"><span>{{ selectedCourse()?.subjectCode }}</span><div><strong>{{ selectedCourse()?.subjectName }}</strong><small>{{ selectedCourse()?.className }} · {{ selectedCourse()?.section }}</small></div></div>
+  <form class="access-grid" [formGroup]="accessForm">
+    <section>
+      <div class="access-title"><i class="pi pi-user-edit"></i><div><strong>Teaching team</strong><small>{{ selectedCourse()?.teacherCount }} currently assigned</small></div></div>
+      <div class="field"><label for="teacherId">Teacher</label><p-select inputId="teacherId" formControlName="teacherId" [options]="teachers()" optionLabel="fullName" optionValue="userId" appendTo="body" [filter]="true" placeholder="Select teacher" /></div>
+      <div class="access-actions"><p-button label="Remove" severity="secondary" [outlined]="true" size="small" [loading]="saving()" (onClick)="updateMembership('removeTeacher')" /><p-button label="Assign" size="small" [loading]="saving()" (onClick)="updateMembership('assignTeacher')" /></div>
+    </section>
+    <section>
+      <div class="access-title"><i class="pi pi-users"></i><div><strong>Student roster</strong><small>{{ selectedCourse()?.studentCount }} currently enrolled</small></div></div>
+      <div class="field"><label for="studentId">Student</label><p-select inputId="studentId" formControlName="studentId" [options]="students()" optionLabel="fullName" optionValue="userId" appendTo="body" [filter]="true" placeholder="Select student" /></div>
+      <div class="access-actions"><p-button label="Remove" severity="secondary" [outlined]="true" size="small" [loading]="saving()" (onClick)="updateMembership('removeStudent')" /><p-button label="Enroll" size="small" [loading]="saving()" (onClick)="updateMembership('enrollStudent')" /></div>
+    </section>
+  </form>
+</p-dialog>

@@ -1,0 +1,10 @@
+/.angular/cache
+/dist
+/node_modules
+/.idea
+/.vscode/*
+!/.vscode/extensions.json
+!/.vscode/launch.json
+!/.vscode/tasks.json
+npm-debug.log*
+*.local

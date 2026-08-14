@@ -1,0 +1,90 @@
+<section class="page">
+  <header class="page-head">
+    <div>
+      <p class="eyebrow">Assessment workflow</p>
+      <h1 class="page-title">Submissions</h1>
+      <p class="page-subtitle">
+        @if (isTeacher()) { Review student work, provide useful feedback and publish marks with confidence. }
+        @else { Follow submitted work, review feedback and keep a clear record of progress. }
+      </p>
+    </div>
+  </header>
+
+  <div class="surface-card table-shell">
+    <div class="toolbar">
+      <div class="toolbar__filters">
+        <span class="search-field"><i class="pi pi-search"></i><input pInputText [formControl]="search" placeholder="Search assignment or student"></span>
+        <p-select [formControl]="statusFilter" [options]="statusOptions" optionLabel="label" optionValue="value" [showClear]="true" placeholder="All statuses" />
+      </div>
+      <span class="record-count">{{ totalRecords() }} submissions</span>
+    </div>
+
+    <p-table
+      [value]="submissions()"
+      [lazy]="true"
+      [loading]="loading()"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 20, 50]"
+      [totalRecords]="totalRecords()"
+      (onLazyLoad)="load($event)">
+      <ng-template #header><tr><th>Assignment</th><th>Student</th><th>Submitted</th><th>Status</th><th>Result</th><th class="action-column">Action</th></tr></ng-template>
+      <ng-template #body let-item>
+        <tr>
+          <td><span class="table-primary">{{ item.assignmentTitle }}</span><span class="table-secondary truncate">{{ item.answer }}</span></td>
+          <td><span class="table-primary">{{ item.studentName }}</span><span class="table-secondary">{{ item.studentEmail }}</span></td>
+          <td><span class="table-primary">{{ item.submittedAtUtc | date: 'MMM d, y' }}</span><span class="table-secondary">{{ item.submittedAtUtc | date: 'h:mm a' }}</span></td>
+          <td><p-tag [value]="statusLabel(item.status)" [severity]="statusSeverity(item.status)" /></td>
+          <td>
+            @if (item.marks !== null) { <span class="grade-result"><strong>{{ item.marks }}</strong> / {{ item.maximumMarks }}</span> }
+            @else { <span class="not-graded">Not graded</span> }
+          </td>
+          <td><div class="row-actions"><p-button [icon]="isTeacher() ? 'pi pi-file-edit' : 'pi pi-eye'" severity="secondary" [text]="true" [rounded]="true" [pTooltip]="isTeacher() ? 'Review submission' : 'View submission'" (onClick)="openReview(item)" /></div></td>
+        </tr>
+      </ng-template>
+      <ng-template #emptymessage><tr><td colspan="6"><div class="empty-state"><div><i class="pi pi-inbox"></i><strong>No submissions found</strong><p>New student work will appear here.</p></div></div></td></tr></ng-template>
+    </p-table>
+  </div>
+</section>
+
+<p-dialog
+  [header]="isTeacher() ? 'Review submission' : 'Submission details'"
+  [visible]="reviewVisible()"
+  (visibleChange)="reviewVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: 'min(760px, 95vw)' }">
+  <div class="review-head">
+    <div><p class="eyebrow">{{ selectedSubmission()?.studentName }}</p><h3>{{ selectedSubmission()?.assignmentTitle }}</h3><span>{{ selectedSubmission()?.submittedAtUtc | date: 'MMM d, y · h:mm a' }}</span></div>
+    @if (selectedSubmission()) { <p-tag [value]="statusLabel(selectedSubmission()!.status)" [severity]="statusSeverity(selectedSubmission()!.status)" /> }
+  </div>
+
+  <section class="answer-panel">
+    <span>Student answer</span>
+    <p>{{ selectedSubmission()?.answer }}</p>
+  </section>
+
+  @if (isTeacher()) {
+    <form class="form-grid" [formGroup]="gradeForm" (ngSubmit)="grade()">
+      <div class="field">
+        <label for="marks">Marks awarded</label>
+        <p-inputNumber inputId="marks" formControlName="marks" [min]="0" [max]="selectedSubmission()?.maximumMarks ?? 0" [maxFractionDigits]="2" />
+        <small>Maximum {{ selectedSubmission()?.maximumMarks }}</small>
+        @if (gradeForm.controls.marks.touched && gradeForm.controls.marks.invalid) { <small class="field-error">Marks must be within the permitted range.</small> }
+      </div>
+      <div class="field field--full"><label for="feedback">Feedback</label><textarea id="feedback" pTextarea formControlName="feedback" rows="5" placeholder="Give specific, constructive feedback"></textarea></div>
+      <div class="review-actions field--full">
+        <div>
+          <p-button type="button" label="Under review" severity="info" [outlined]="true" size="small" [loading]="saving()" (onClick)="changeStatus(SubmissionStatus.UnderReview)" />
+          <p-button type="button" label="Return" severity="warn" [outlined]="true" size="small" [loading]="saving()" (onClick)="changeStatus(SubmissionStatus.Returned)" />
+        </div>
+        <div><p-button type="button" label="Cancel" severity="secondary" [text]="true" (onClick)="reviewVisible.set(false)" /><p-button type="submit" label="Publish grade" icon="pi pi-check" [loading]="saving()" /></div>
+      </div>
+    </form>
+  } @else {
+    <section class="feedback-panel">
+      <div><span>Marks</span><strong>{{ selectedSubmission()?.marks ?? '—' }} <small>/ {{ selectedSubmission()?.maximumMarks }}</small></strong></div>
+      <div><span>Teacher feedback</span><p>{{ selectedSubmission()?.feedback || 'Feedback has not been published yet.' }}</p></div>
+    </section>
+  }
+</p-dialog>

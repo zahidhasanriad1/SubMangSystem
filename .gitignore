@@ -1,0 +1,17 @@
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/.angular/
+.vs/
+.idea/
+.vscode/
+.env
+AssignFlow.API/appsettings.Local.json
+*.user
+*.suo
+*.log
+.DS_Store
+TestResults/
+coverage/
+artifacts/

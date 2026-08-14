@@ -1,0 +1,150 @@
+<section class="page">
+  <header class="page-head">
+    <div>
+      <p class="eyebrow">Coursework</p>
+      <h1 class="page-title">Assignments</h1>
+      <p class="page-subtitle">
+        @if (isTeacher()) { Plan, publish and track coursework for your assigned classes. }
+        @else if (isStudent()) { Review published work and submit clear, complete answers before each deadline. }
+        @else { Monitor coursework activity across the institution. }
+      </p>
+    </div>
+    @if (isTeacher()) {
+      <div class="page-head__actions"><p-button label="Create assignment" icon="pi pi-plus" (onClick)="openCreate()" /></div>
+    }
+  </header>
+
+  <div class="surface-card table-shell">
+    <div class="toolbar">
+      <div class="toolbar__filters">
+        <span class="search-field"><i class="pi pi-search"></i><input pInputText [formControl]="search" placeholder="Search assignments"></span>
+        <p-select [formControl]="statusFilter" [options]="statusOptions" optionLabel="label" optionValue="value" [showClear]="true" placeholder="All statuses" />
+      </div>
+      <span class="record-count">{{ totalRecords() }} assignments</span>
+    </div>
+
+    <p-table
+      [value]="assignments()"
+      [lazy]="true"
+      [loading]="loading()"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 20, 50]"
+      [totalRecords]="totalRecords()"
+      (onLazyLoad)="load($event)">
+      <ng-template #header>
+        <tr><th>Assignment</th><th>Course</th><th>Deadline</th><th>Marks</th><th>Status</th><th>Progress</th><th class="action-column">Action</th></tr>
+      </ng-template>
+      <ng-template #body let-item>
+        <tr>
+          <td><span class="table-primary">{{ item.title }}</span><span class="table-secondary truncate">{{ item.description }}</span></td>
+          <td><span class="course-code">{{ item.subjectCode }}</span><span class="table-secondary">{{ item.courseName }}</span></td>
+          <td><span class="deadline" [class.deadline--late]="isOverdue(item)">{{ item.deadlineUtc | date: 'MMM d, y' }}</span><span class="table-secondary">{{ item.deadlineUtc | date: 'h:mm a' }}</span></td>
+          <td>{{ item.maximumMarks }}</td>
+          <td><p-tag [value]="statusLabel(item.status)" [severity]="statusSeverity(item.status)" /></td>
+          <td>
+            @if (isStudent()) {
+              <span class="submission-state" [class.submission-state--done]="item.hasSubmitted"><i [class]="item.hasSubmitted ? 'pi pi-check-circle' : 'pi pi-circle'"></i>{{ item.hasSubmitted ? 'Submitted' : 'Not submitted' }}</span>
+            } @else {
+              <span class="submission-count">{{ item.submissionCount }} received</span>
+            }
+          </td>
+          <td>
+            <div class="row-actions">
+              @if (!isTeacher()) {
+                <p-button icon="pi pi-eye" severity="secondary" [text]="true" [rounded]="true" pTooltip="View details" (onClick)="openDetails(item)" />
+              }
+              @if (isTeacher()) {
+                <p-button icon="pi pi-pencil" severity="secondary" [text]="true" [rounded]="true" pTooltip="Edit" (onClick)="openEdit(item)" />
+                @if (item.status === AssignmentStatus.Draft) {
+                  <p-button icon="pi pi-send" severity="success" [text]="true" [rounded]="true" pTooltip="Publish" (onClick)="changeStatus(item, AssignmentStatus.Published)" />
+                  <p-button icon="pi pi-trash" severity="danger" [text]="true" [rounded]="true" pTooltip="Delete" (onClick)="confirmDelete(item)" />
+                }
+                @if (item.status === AssignmentStatus.Published) {
+                  <p-button icon="pi pi-box" severity="warn" [text]="true" [rounded]="true" pTooltip="Archive" (onClick)="changeStatus(item, AssignmentStatus.Archived)" />
+                }
+              }
+              @if (isStudent() && item.status === AssignmentStatus.Published) {
+                <p-button [label]="item.hasSubmitted ? 'Resubmit' : 'Submit'" icon="pi pi-send" size="small" [outlined]="item.hasSubmitted" [disabled]="isOverdue(item)" (onClick)="openSubmit(item)" />
+              }
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template #emptymessage><tr><td colspan="7"><div class="empty-state"><div><i class="pi pi-file-edit"></i><strong>No assignments found</strong><p>Adjust the filters or create the first assignment.</p></div></div></td></tr></ng-template>
+    </p-table>
+  </div>
+</section>
+
+<p-dialog
+  [header]="editingAssignment() ? 'Edit assignment' : 'Create assignment'"
+  [visible]="editorVisible()"
+  (visibleChange)="editorVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: 'min(760px, 95vw)' }">
+  <form class="form-grid" [formGroup]="form" (ngSubmit)="save()">
+    <div class="field field--full">
+      <label for="assignmentCourse">Course offering</label>
+      <p-select inputId="assignmentCourse" formControlName="courseOfferingId" [options]="courses()" optionLabel="subjectName" optionValue="courseOfferingId" appendTo="body" placeholder="Select your course">
+        <ng-template #selectedItem let-course>{{ course.subjectCode }} · {{ course.className }} {{ course.section }}</ng-template>
+        <ng-template #item let-course><div><span class="table-primary">{{ course.subjectName }}</span><span class="table-secondary">{{ course.subjectCode }} · {{ course.className }} {{ course.section }}</span></div></ng-template>
+      </p-select>
+    </div>
+    <div class="field field--full"><label for="assignmentTitle">Title</label><input id="assignmentTitle" pInputText formControlName="title" placeholder="Clear, action-oriented assignment title"></div>
+    <div class="field field--full"><label for="assignmentDescription">Instructions</label><textarea id="assignmentDescription" pTextarea formControlName="description" rows="6" placeholder="Explain the required work, format and evaluation criteria"></textarea></div>
+    <div class="field"><label for="deadline">Deadline</label><p-datepicker inputId="deadline" formControlName="deadline" [showTime]="true" [showIcon]="true" [minDate]="editingAssignment() ? undefined : minimumDeadline" appendTo="body" /></div>
+    <div class="field"><label for="maximumMarks">Maximum marks</label><p-inputNumber inputId="maximumMarks" formControlName="maximumMarks" [min]="1" [max]="10000" [maxFractionDigits]="2" /></div>
+    @if (!editingAssignment()) {
+      <div class="field"><label for="assignmentStatus">Initial status</label><p-select inputId="assignmentStatus" formControlName="status" [options]="statusOptions.slice(0, 2)" optionLabel="label" optionValue="value" appendTo="body" /></div>
+    }
+    <div class="field toggle-row"><div><label for="resubmission">Allow resubmission</label><small>Students may replace an ungraded answer.</small></div><p-toggleSwitch inputId="resubmission" formControlName="allowResubmission" /></div>
+    <div class="dialog-actions field--full"><p-button type="button" label="Cancel" severity="secondary" [text]="true" (onClick)="editorVisible.set(false)" /><p-button type="submit" [label]="editingAssignment() ? 'Save changes' : 'Create assignment'" [loading]="saving()" /></div>
+  </form>
+</p-dialog>
+
+<p-dialog
+  header="Assignment details"
+  [visible]="detailsVisible()"
+  (visibleChange)="detailsVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: 'min(720px, 95vw)' }">
+  @if (detailAssignment(); as item) {
+    <section class="assignment-detail">
+      <header>
+        <div><span>{{ item.subjectCode }}</span><h3>{{ item.title }}</h3><p>{{ item.courseName }}</p></div>
+        <p-tag [value]="statusLabel(item.status)" [severity]="statusSeverity(item.status)" />
+      </header>
+      <div class="assignment-detail__facts">
+        <div><span>Deadline</span><strong>{{ item.deadlineUtc | date: 'MMM d, y · h:mm a' }}</strong></div>
+        <div><span>Maximum marks</span><strong>{{ item.maximumMarks }}</strong></div>
+        <div><span>Teacher</span><strong>{{ item.teacherName }}</strong></div>
+        <div><span>Resubmission</span><strong>{{ item.allowResubmission ? 'Allowed' : 'Not allowed' }}</strong></div>
+      </div>
+      <article><span>Instructions</span><p>{{ item.description }}</p></article>
+      <div class="dialog-actions">
+        <p-button type="button" label="Close" severity="secondary" [outlined]="true" (onClick)="detailsVisible.set(false)" />
+        @if (isStudent() && item.status === AssignmentStatus.Published) {
+          <p-button [label]="item.hasSubmitted ? 'Update submission' : 'Submit assignment'" icon="pi pi-send" [disabled]="isOverdue(item)" (onClick)="detailsVisible.set(false); openSubmit(item)" />
+        }
+      </div>
+    </section>
+  }
+</p-dialog>
+
+<p-dialog
+  [header]="submissionAssignment()?.hasSubmitted ? 'Resubmit assignment' : 'Submit assignment'"
+  [visible]="submitVisible()"
+  (visibleChange)="submitVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: 'min(680px, 95vw)' }">
+  <div class="submission-context"><span>{{ submissionAssignment()?.subjectCode }}</span><div><strong>{{ submissionAssignment()?.title }}</strong><small>Due {{ submissionAssignment()?.deadlineUtc | date: 'MMM d, y · h:mm a' }}</small></div></div>
+  <form [formGroup]="submitForm" (ngSubmit)="submitAnswer()">
+    <div class="field"><label for="answer">Your answer</label><textarea id="answer" pTextarea formControlName="answer" rows="10" placeholder="Write a complete answer with the detail requested by your teacher"></textarea><small>Your latest answer replaces the previous ungraded submission.</small></div>
+    <div class="dialog-actions"><p-button type="button" label="Cancel" severity="secondary" [text]="true" (onClick)="submitVisible.set(false)" /><p-button type="submit" label="Submit work" icon="pi pi-send" [loading]="saving()" /></div>
+  </form>
+</p-dialog>
+
+<p-confirmDialog />

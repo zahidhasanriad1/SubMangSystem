@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/tests/">
+    <Project Path="tests/AssignFlow.Tests/AssignFlow.Tests.csproj" />
+  </Folder>
+  <Project Path="AssignFlow.API/AssignFlow.API.csproj">
+    <BuildDependency Project="AssignFlow.DataAccess/AssignFlow.DataAccess.csproj" />
+  </Project>
+  <Project Path="AssignFlow.DataAccess/AssignFlow.DataAccess.csproj" />
+  <Project Path="AssignFlow.Domain/AssignFlow.Domain.csproj" />
+  <Project Path="AssignFlow.Models/AssignFlow.Models.csproj" />
+  <Project Path="AssignFlow.Services/AssignFlow.Services.csproj" />
+  <Project Path="AssignFlow.Utils/AssignFlow.Utils.csproj" />
+</Solution>

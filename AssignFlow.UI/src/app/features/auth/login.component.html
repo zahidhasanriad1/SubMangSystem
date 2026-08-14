@@ -1,0 +1,90 @@
+<main class="login-page">
+  <section class="login-story" aria-hidden="true">
+    <div class="story-brand">
+      <span><i class="pi pi-send"></i></span>
+      <strong>AssignFlow</strong>
+    </div>
+
+    <div class="flow-visual">
+      <span class="orbit orbit--outer"></span>
+      <span class="orbit orbit--inner"></span>
+      <span class="flow-dot flow-dot--one"></span>
+      <span class="flow-dot flow-dot--two"></span>
+      <span class="flow-dot flow-dot--three"></span>
+
+      <div class="flow-card flow-card--brief">
+        <span class="card-icon"><i class="pi pi-file-edit"></i></span>
+        <span class="card-lines"><i></i><i></i><i></i></span>
+        <span class="card-check"><i class="pi pi-check"></i></span>
+      </div>
+
+      <div class="flow-card flow-card--feedback">
+        <span class="avatar"><i class="pi pi-user"></i></span>
+        <span class="feedback-lines"><i></i><i></i></span>
+        <span class="score-ring">A</span>
+      </div>
+
+      <div class="flow-core">
+        <span class="core-halo"></span>
+        <i class="pi pi-send"></i>
+      </div>
+
+      <div class="flow-card flow-card--submission">
+        <span class="submission-bar"><i></i></span>
+        <span class="submission-file"><i class="pi pi-paperclip"></i></span>
+        <span class="submission-state"><i class="pi pi-check-circle"></i></span>
+      </div>
+    </div>
+
+    <div class="story-signature"><span></span><i class="pi pi-sparkles"></i><span></span></div>
+  </section>
+
+  <section class="login-panel">
+    <div class="login-card">
+      <div class="login-card__head">
+        <span class="mobile-brand"><i class="pi pi-send"></i></span>
+        <p class="eyebrow">AssignFlow workspace</p>
+        <h2>Welcome back</h2>
+        <p>Sign in to continue.</p>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="field">
+          <label for="email">Email address</label>
+          <span class="input-icon">
+            <i class="pi pi-envelope"></i>
+            <input id="email" pInputText type="email" formControlName="email" autocomplete="email" placeholder="you@institution.edu">
+          </span>
+          @if (form.controls.email.touched && form.controls.email.invalid) {
+            <small class="field-error">Enter a valid email address.</small>
+          }
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <p-password
+            inputId="password"
+            formControlName="password"
+            [feedback]="false"
+            [toggleMask]="true"
+            autocomplete="current-password"
+            placeholder="Enter your password" />
+          @if (form.controls.password.touched && form.controls.password.invalid) {
+            <small class="field-error">Password must contain at least 8 characters.</small>
+          }
+        </div>
+
+        <p-button type="submit" label="Sign in to workspace" icon="pi pi-arrow-right" iconPos="right" [loading]="loading()" />
+      </form>
+
+      <div class="demo-access">
+        <span>Demo access</span>
+        <div>
+          <button type="button" (click)="useDemo('mzhr.riad@gmail.com')">Admin</button>
+          <button type="button" (click)="useDemo('teacher@assignflow.local')">Teacher</button>
+          <button type="button" (click)="useDemo('student@assignflow.local')">Student</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>

@@ -1,0 +1,80 @@
+<section class="page">
+  <header class="welcome-panel">
+    <div>
+      <p class="eyebrow">{{ auth.role() }} workspace</p>
+      <h1>Good to see you, {{ auth.user()?.fullName?.split(' ')?.[0] }}.</h1>
+      <p>Here is a focused view of the work that needs attention today.</p>
+    </div>
+    <div class="welcome-panel__stamp">
+      <i class="pi pi-calendar-clock"></i>
+      <span>{{ loginAt() | date: 'EEEE, MMMM d, y' }}</span>
+      <strong>Signed in at {{ loginAt() | date: 'h:mm a' }}</strong>
+    </div>
+  </header>
+
+  <div class="metrics">
+    @for (card of cards(); track card.label) {
+      <article class="metric-card" [attr.data-tone]="card.tone">
+        <div class="metric-card__icon"><i [class]="card.icon"></i></div>
+        <div>
+          <span>{{ card.label }}</span>
+          @if (loading()) {
+            <p-skeleton width="5rem" height="2.2rem" />
+          } @else {
+            <strong>{{ card.value }}</strong>
+          }
+        </div>
+      </article>
+    }
+  </div>
+
+  <div class="dashboard-grid">
+    <article class="focus-card surface-card">
+      <div class="focus-card__head">
+        <div>
+          <p class="eyebrow">Recommended next step</p>
+          @switch (auth.role()) {
+            @case ('Admin') { <h2>Keep the academic structure current.</h2> }
+            @case ('Teacher') { <h2>Turn course plans into clear assignments.</h2> }
+            @default { <h2>Stay ahead of your next deadline.</h2> }
+          }
+        </div>
+        <span><i class="pi pi-arrow-up-right"></i></span>
+      </div>
+
+      @switch (auth.role()) {
+        @case ('Admin') {
+          <p>Review people, courses and settings before the next teaching cycle begins.</p>
+          <div class="focus-card__actions">
+            <p-button label="Manage academics" icon="pi pi-building-columns" routerLink="/academic" />
+            <p-button label="Review users" severity="secondary" [outlined]="true" routerLink="/users" />
+          </div>
+        }
+        @case ('Teacher') {
+          <p>Create a draft, validate the deadline, then publish when the coursework is ready.</p>
+          <div class="focus-card__actions">
+            <p-button label="Open assignments" icon="pi pi-file-edit" routerLink="/assignments" />
+            <p-button label="Review submissions" severity="secondary" [outlined]="true" routerLink="/submissions" />
+          </div>
+        }
+        @default {
+          <p>Open published work, check requirements and submit before the deadline.</p>
+          <div class="focus-card__actions">
+            <p-button label="View assignments" icon="pi pi-arrow-right" iconPos="right" routerLink="/assignments" />
+          </div>
+        }
+      }
+    </article>
+
+    <aside class="insight-card surface-card">
+      <div class="insight-card__ring" [style.background]="'conic-gradient(#299096 0 ' + publishingRate() + '%, #dce9eb ' + publishingRate() + '%)'">
+        <span>{{ publishingRate() }}%</span>
+      </div>
+      <div>
+        <p class="eyebrow">Publishing ratio</p>
+        <h3>Coursework readiness</h3>
+        <p>{{ summary().publishedAssignments }} of {{ summary().assignments }} assignments are currently available.</p>
+      </div>
+    </aside>
+  </div>
+</section>

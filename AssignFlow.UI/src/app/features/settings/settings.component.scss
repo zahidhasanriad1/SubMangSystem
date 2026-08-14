@@ -1,0 +1,9 @@
+.settings-page { max-width: 1180px; }
+.settings-note { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 18px; padding: 15px 17px; color: #365d68; background: #e9f4f4; border: 1px solid #d3e7e8; border-radius: 13px; }
+.settings-note > span { color: #237d82; }
+.settings-note strong { display: block; font-size: 12px; }
+.settings-note p { margin: 3px 0 0; color: #6b838c; font-size: 11px; }
+.action-column { width: 90px; text-align: right; }
+code { padding: 6px 8px; color: #205d68; background: #e9f2f3; border-radius: 7px; font-family: "SFMono-Regular", Consolas, monospace; font-size: 11px; font-weight: 700; }
+.setting-value { display: block; max-width: 280px; overflow: hidden; color: #294b57; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+.setting-description { color: #6f858e; font-size: 12px; }

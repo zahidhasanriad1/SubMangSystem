@@ -1,0 +1,45 @@
+<section class="page settings-page">
+  <header class="page-head">
+    <div>
+      <p class="eyebrow">Administration</p>
+      <h1 class="page-title">Application settings</h1>
+      <p class="page-subtitle">Maintain concise operational values without changing application code.</p>
+    </div>
+    <div class="page-head__actions"><p-button label="Add setting" icon="pi pi-plus" (onClick)="openCreate()" /></div>
+  </header>
+
+  <div class="settings-note">
+    <span><i class="pi pi-info-circle"></i></span>
+    <div><strong>Configuration safety</strong><p>Changes take effect for new requests. Use stable keys and document each value clearly.</p></div>
+  </div>
+
+  <div class="surface-card table-shell">
+    <p-table [value]="settings()" [loading]="loading()" [rowHover]="true">
+      <ng-template #header><tr><th>Key</th><th>Value</th><th>Description</th><th class="action-column">Action</th></tr></ng-template>
+      <ng-template #body let-setting>
+        <tr>
+          <td><code>{{ setting.key }}</code></td>
+          <td><span class="setting-value">{{ setting.value }}</span></td>
+          <td><span class="setting-description">{{ setting.description || 'No description provided' }}</span></td>
+          <td><div class="row-actions"><p-button icon="pi pi-pencil" severity="secondary" [text]="true" [rounded]="true" pTooltip="Edit setting" (onClick)="openEdit(setting)" /></div></td>
+        </tr>
+      </ng-template>
+      <ng-template #emptymessage><tr><td colspan="4"><div class="empty-state"><div><i class="pi pi-cog"></i><strong>No settings configured</strong></div></div></td></tr></ng-template>
+    </p-table>
+  </div>
+</section>
+
+<p-dialog
+  [header]="editingSetting() ? 'Edit setting' : 'Create setting'"
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: 'min(620px, 94vw)' }">
+  <form class="form-grid" [formGroup]="form" (ngSubmit)="save()">
+    <div class="field field--full"><label for="settingKey">Key</label><input id="settingKey" pInputText formControlName="key" placeholder="ASSIGNMENT.REMINDER_DAYS"><small>Letters, numbers, dots, hyphens and underscores only.</small></div>
+    <div class="field field--full"><label for="settingValue">Value</label><input id="settingValue" pInputText formControlName="value" placeholder="Configuration value"></div>
+    <div class="field field--full"><label for="settingDescription">Description</label><textarea id="settingDescription" pTextarea formControlName="description" rows="4" placeholder="Explain how this setting is used"></textarea></div>
+    <div class="dialog-actions field--full"><p-button type="button" label="Cancel" severity="secondary" [text]="true" (onClick)="dialogVisible.set(false)" /><p-button type="submit" label="Save setting" [loading]="saving()" /></div>
+  </form>
+</p-dialog>

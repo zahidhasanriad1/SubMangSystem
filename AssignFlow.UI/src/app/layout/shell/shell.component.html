@@ -1,0 +1,63 @@
+<div class="app-shell">
+  @if (mobileMenuOpen()) {
+    <button class="nav-backdrop" aria-label="Close navigation" (click)="closeMobileMenu()"></button>
+  }
+
+  <aside class="sidebar" [class.sidebar--open]="mobileMenuOpen()">
+    <div class="brand">
+      <span class="brand__mark"><i class="pi pi-send"></i></span>
+      <span>
+        <strong>AssignFlow</strong>
+        <small>Learning workspace</small>
+      </span>
+    </div>
+
+    <nav class="navigation" aria-label="Primary navigation">
+      <p class="navigation__label">Workspace</p>
+      @for (item of navigation(); track item.route) {
+        <a
+          class="navigation__item"
+          [routerLink]="item.route"
+          routerLinkActive="navigation__item--active"
+          [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
+          (click)="closeMobileMenu()">
+          <i [class]="item.icon"></i>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <p class="sidebar__footer">© {{ currentYear }} AssignFlow</p>
+  </aside>
+
+  <div class="workspace">
+    <header class="topbar">
+      <button class="mobile-menu" aria-label="Open navigation" [attr.aria-expanded]="mobileMenuOpen()" (click)="openMobileMenu()">
+        <i class="pi pi-bars"></i>
+      </button>
+      <div class="topbar__context">
+        <span class="live-dot"></span>
+        <span>Academic operations</span>
+      </div>
+      <div class="topbar__profile">
+        <div class="topbar__identity">
+          <strong>{{ auth.user()?.fullName }}</strong>
+          <span>{{ auth.role() }}</span>
+        </div>
+        <p-avatar [label]="auth.initials()" shape="circle" size="large" />
+        <p-button
+          icon="pi pi-sign-out"
+          severity="secondary"
+          [text]="true"
+          [rounded]="true"
+          pTooltip="Sign out"
+          tooltipPosition="bottom"
+          (onClick)="auth.logout()" />
+      </div>
+    </header>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+  </div>
+</div>
