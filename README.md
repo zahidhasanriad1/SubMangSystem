@@ -17,7 +17,7 @@ A secure, role-based academic workspace for planning coursework, managing submis
 
 </div>
 
-![AssignFlow Admin dashboard](docs/screenshots/admin-dashboard.png)
+![AssignFlow secure login](docs/screenshots/login.jpg)
 
 ## Overview
 
