@@ -25,7 +25,12 @@ var app = builder.Build();
 app.UseMiddleware<CustomExceptionMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI();
-app.UseHttpsRedirection();
+
+// Local development proxies terminate browser traffic before forwarding to the API over HTTP.
+// Deployed environments continue to enforce HTTPS at the application boundary.
+if (!app.Environment.IsDevelopment())
+    app.UseHttpsRedirection();
+
 app.UseCors("AngularClient");
 app.UseAuthentication();
 app.UseAuthorization();
